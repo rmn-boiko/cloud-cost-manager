@@ -1,0 +1,14 @@
+[package]
+name = "cloud-cost-cli"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+anyhow.workspace = true
+clap.workspace = true
+chrono.workspace = true
+tokio.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+cloud-cost-core = { path = "../core-traits" }
+cloud-cost-aws = { path = "../aws-cost" }

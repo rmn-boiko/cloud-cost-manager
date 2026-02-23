@@ -1,0 +1,17 @@
+[package]
+name = "cloud-cost-aws"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+anyhow.workspace = true
+async-trait.workspace = true
+aws-config.workspace = true
+aws-credential-types.workspace = true
+aws-sdk-costexplorer.workspace = true
+aws-sdk-iam.workspace = true
+aws-sdk-organizations.workspace = true
+aws-sdk-sts.workspace = true
+chrono.workspace = true
+futures.workspace = true
+cloud-cost-core = { path = "../core-traits" }

@@ -1,0 +1,10 @@
+[
+  {
+    "access_key_id": "AKIAEXAMPLEKEY1",
+    "secret_access_key": "exampleSecretKeyValue1"
+  },
+  {
+    "access_key_id": "AKIAEXAMPLEKEY2",
+    "secret_access_key": "exampleSecretKeyValue2"
+  }
+]
