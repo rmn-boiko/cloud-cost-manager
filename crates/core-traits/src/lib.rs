@@ -1,4 +1,4 @@
-use anyhow::{anyhow, Result};
+use anyhow::{Result, anyhow};
 use async_trait::async_trait;
 use chrono::{Datelike, Duration, NaiveDate};
 use futures::future::try_join_all;
@@ -54,8 +54,10 @@ pub async fn generate_report<P: CostProvider>(
     let (month_start, month_end_exclusive) = month_to_date(today);
     let (prev_start, prev_end_exclusive) = previous_month_same_point(today)?;
 
-    let summaries = try_join_all(accounts.iter().cloned().map(|account_ref| {
-        async move { provider.fetch_account_summary(&account_ref, month_start, month_end_exclusive).await }
+    let summaries = try_join_all(accounts.iter().map(|account_ref| async move {
+        provider
+            .fetch_account_summary(account_ref, month_start, month_end_exclusive)
+            .await
     }))
     .await?;
 
@@ -76,7 +78,8 @@ pub async fn generate_report<P: CostProvider>(
     top_services.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap_or(std::cmp::Ordering::Equal));
     top_services.truncate(5);
 
-    let prev_total = total_for_all_accounts(provider, accounts, prev_start, prev_end_exclusive).await?;
+    let prev_total =
+        total_for_all_accounts(provider, accounts, prev_start, prev_end_exclusive).await?;
 
     let delta = total_all - prev_total;
     let delta_pct = if prev_total.abs() < f64::EPSILON {
@@ -106,8 +109,8 @@ async fn total_for_all_accounts<P: CostProvider>(
     start: NaiveDate,
     end_exclusive: NaiveDate,
 ) -> Result<f64> {
-    let totals = try_join_all(accounts.iter().cloned().map(|account_ref| {
-        async move { provider.total_cost(&account_ref, start, end_exclusive).await }
+    let totals = try_join_all(accounts.iter().map(|account_ref| async move {
+        provider.total_cost(account_ref, start, end_exclusive).await
     }))
     .await?;
 
@@ -124,8 +127,9 @@ fn previous_month_same_point(today: NaiveDate) -> Result<(NaiveDate, NaiveDate)>
     let first_of_this_month = NaiveDate::from_ymd_opt(today.year(), today.month(), 1)
         .ok_or_else(|| anyhow!("Invalid current month date"))?;
     let last_of_prev_month = first_of_this_month - Duration::days(1);
-    let prev_start = NaiveDate::from_ymd_opt(last_of_prev_month.year(), last_of_prev_month.month(), 1)
-        .ok_or_else(|| anyhow!("Invalid previous month date"))?;
+    let prev_start =
+        NaiveDate::from_ymd_opt(last_of_prev_month.year(), last_of_prev_month.month(), 1)
+            .ok_or_else(|| anyhow!("Invalid previous month date"))?;
 
     let day = today.day();
     let prev_end_exclusive = prev_start + Duration::days(day as i64);

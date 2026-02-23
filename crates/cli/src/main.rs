@@ -1,6 +1,6 @@
 use anyhow::Result;
-use clap::Parser;
 use chrono::Utc;
+use clap::Parser;
 use cloud_cost_aws::{AwsCostProvider, StaticCredentials};
 use cloud_cost_core::generate_report;
 use serde::Deserialize;
@@ -51,7 +51,10 @@ async fn main() -> Result<()> {
                 },
             );
         }
-        (AwsCostProvider::with_static_credentials(args.region, creds_map), labels)
+        (
+            AwsCostProvider::with_static_credentials(args.region, creds_map),
+            labels,
+        )
     } else {
         let profiles = if args.profiles.is_empty() {
             vec!["default".to_string()]

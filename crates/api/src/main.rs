@@ -1,17 +1,19 @@
 use anyhow::Result;
+use axum::response::Response;
 use axum::{
+    Json, Router,
     extract::State,
     http::{HeaderMap, HeaderValue, StatusCode},
     response::IntoResponse,
     routing::get,
-    Json, Router,
 };
-use axum::response::Response;
-use http::header::{ACCESS_CONTROL_ALLOW_HEADERS, ACCESS_CONTROL_ALLOW_METHODS, ACCESS_CONTROL_ALLOW_ORIGIN};
 use chrono::Utc;
 use clap::{Parser, ValueEnum};
 use cloud_cost_aws::{AssumeRoleConfig, AwsCostProvider, StaticCredentials};
 use cloud_cost_core::generate_report;
+use http::header::{
+    ACCESS_CONTROL_ALLOW_HEADERS, ACCESS_CONTROL_ALLOW_METHODS, ACCESS_CONTROL_ALLOW_ORIGIN,
+};
 use serde::Deserialize;
 use std::collections::HashMap;
 use std::net::SocketAddr;
@@ -122,7 +124,10 @@ async fn main() -> Result<()> {
                 },
             );
         }
-        (AwsCostProvider::with_static_credentials(args.region, creds_map), labels)
+        (
+            AwsCostProvider::with_static_credentials(args.region, creds_map),
+            labels,
+        )
     } else {
         let profiles = if args.profiles.is_empty() {
             vec!["default".to_string()]

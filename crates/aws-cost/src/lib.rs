@@ -1,9 +1,9 @@
-use anyhow::{anyhow, Context, Result};
+use anyhow::{Context, Result, anyhow};
 use async_trait::async_trait;
 use aws_config::{BehaviorVersion, Region};
 use aws_credential_types::Credentials;
-use aws_sdk_costexplorer::types::{DateInterval, Granularity};
 use aws_sdk_costexplorer::Client as CeClient;
+use aws_sdk_costexplorer::types::{DateInterval, Granularity};
 use aws_sdk_iam::Client as IamClient;
 use aws_sdk_organizations::Client as OrgClient;
 use aws_sdk_sts::Client as StsClient;
